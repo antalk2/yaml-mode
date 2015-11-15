@@ -144,12 +144,25 @@ that key is pressed to begin a block literal."
   "Regexp matching a single YAML hash key.")
 
 (defconst yaml-scalar-context-re
-  (concat "\\(?:^\\(?:--- \\)?\\|{\\|\\(?: *[-,] +\\)+\\) *"
+  (concat "\\(?:"
+	  "^\\(?:--- \\)?"
+	  "\\|"
+	  "{"
+	  "\\|"
+	  "\\(?:[,] +\\)+"
+	  "\\|"
+	  "\\(?: *[-] +\\)+"
+	  "\\) *"
           "\\(?:" yaml-bare-scalar-re " *: \\)?")
   "Regexp indicating the begininng of a scalar context.")
 
 (defconst yaml-nested-map-re
-  (concat ".*: *\\(?:&.*\\|{ *\\|" yaml-tag-re " *\\)?$")
+  (concat ".*: *"
+	  "\\(?:"   "&.*"
+	  "\\|"     "{ *"
+	  "\\|"     yaml-tag-re " *"
+	  "\\)?$"
+	  )
   "Regexp matching a line beginning a YAML nested structure.")
 
 (defconst yaml-block-literal-base-re " *[>|][-+0-9]* *\\(?:\n\\|\\'\\)"
@@ -162,8 +175,12 @@ that key is pressed to begin a block literal."
   "Regexp matching a line beginning a YAML block literal.")
 
 (defconst yaml-nested-sequence-re
-  (concat "^\\(?:\\(?: *- +\\)+\\|\\(:?-$\\)\\)"
-          "\\(?:" yaml-bare-scalar-re " *:\\(?: +.*\\)?\\)?$")
+  (concat "^\\(?:"
+	  "\\(?:"   " *- +" "\\)+"
+	  "\\|"
+	  "\\(:?"    " *-$"    "\\)"
+	  "\\)+"
+	  )
   "Regexp matching a line containing one or more nested YAML sequences.")
 
 (defconst yaml-constant-scalars-re
@@ -323,10 +340,25 @@ the entire buffer in `font-lock-string-face'."
       (while (and (looking-at yaml-blank-line-re)
                   (> (point) (point-min)))
         (forward-line -1))
-      (+ (current-indentation)
-         (if (looking-at yaml-nested-map-re) yaml-indent-offset 0)
-         (if (looking-at yaml-nested-sequence-re) yaml-indent-offset 0)
-         (if (looking-at yaml-block-literal-re) yaml-indent-offset 0)))))
+      ; found reference line
+      ; to support indentation after '- - text' or '- -', we handle
+      ; the yaml-nested-sequence-re specially
+      (if (looking-at yaml-nested-sequence-re)
+	  ; find last '- ' or '-$', take its column as current-indentation
+	  (progn
+	    (while (looking-at "\\( \\|- \\|-$\\)" )
+	      (forward-char 1)
+	      )
+	    (while (and (> (current-column) 0) (not (looking-at "-")) )
+	      (backward-char 1) )
+	    (+ (current-column) yaml-indent-offset)
+	  )
+	; else
+	(+ (current-indentation)
+	   (if (looking-at yaml-nested-map-re     ) yaml-indent-offset 0)
+	   (if (looking-at yaml-block-literal-re  ) yaml-indent-offset 0))
+	)
+	)))
 
 (defun yaml-indent-line ()
   "Indent the current line.
