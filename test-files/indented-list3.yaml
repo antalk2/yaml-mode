@@ -6,5 +6,28 @@
   - text2
 - - line2
 
-- -
-    aaa
+
+## also want: - key:
+
+- blessed_similarities:
+    - - szív-cor
+      - szívizom
+
+
+- group: "Izomszövetek előfordulása a különböző szervrendszerekben"
+  offered_answers:
+    - simaizom
+    - harántcsíkolt izom
+    - semmilyen
+    - porc
+  blessed_similarities:
+    -
+      - porc
+      - simaizom
+    -
+      - szívizom
+      - simaizom
+
+
+- aaa: word1
+    word2

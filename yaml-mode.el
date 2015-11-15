@@ -158,10 +158,10 @@ that key is pressed to begin a block literal."
 
 (defconst yaml-nested-map-re
   (concat ".*: *"
-	  "\\(?:"   "&.*"
-	  "\\|"     "{ *"
-	  "\\|"     yaml-tag-re " *"
-	  "\\)?$"
+	  ; "\\(?:"   "&.*"
+	  ; "\\|"     "{ *"
+	  ; "\\|"     yaml-tag-re " *"
+	  ; "\\)?$"
 	  )
   "Regexp matching a line beginning a YAML nested structure.")
 
@@ -175,7 +175,8 @@ that key is pressed to begin a block literal."
   "Regexp matching a line beginning a YAML block literal.")
 
 (defconst yaml-nested-sequence-re
-  (concat "^\\(?:"
+  (concat "^"
+	  "\\(?:"
 	  "\\(?:"   " *- +" "\\)+"
 	  "\\|"
 	  "\\(:?"    " *-$"    "\\)"
@@ -349,9 +350,13 @@ the entire buffer in `font-lock-string-face'."
 	    (while (looking-at "\\( \\|- \\|-$\\)" )
 	      (forward-char 1)
 	      )
+	    (if (looking-at yaml-nested-map-re)
+		(+ (current-column) yaml-indent-offset)
+	      ;; else : go back to last '-'
 	    (while (and (> (current-column) 0) (not (looking-at "-")) )
 	      (backward-char 1) )
 	    (+ (current-column) yaml-indent-offset)
+	    )
 	  )
 	; else
 	(+ (current-indentation)
