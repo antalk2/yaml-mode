@@ -1,0 +1,10 @@
+
+# fix indenting after line1
+- - line1
+  - text1
+    text1 continued
+  - text2
+- - line2
+
+- -
+    aaa
