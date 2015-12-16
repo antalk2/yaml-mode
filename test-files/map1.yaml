@@ -1,0 +1,5 @@
+
+aa: "vaa"
+bb: "vbb"
+bb: "vcc"
+# yaml2json gives bb="vcc", drops "vbb" silently
