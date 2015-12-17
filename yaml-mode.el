@@ -179,9 +179,18 @@ that key is pressed to begin a block literal."
 	  "\\(?:"
 	  "\\(?:"   " *- +" "\\)+"
 	  "\\|"
-	  "\\(:?"    " *-$"    "\\)"
+	  "\\(?:"    " *-$"    "\\)"
 	  "\\)+"
-	  )
+          ;; The following insists on ('key:' or nothing) till end-of-line.
+          ;; But why?
+          ;;
+          ;; Removed to allow indentation of text1 line in
+          ;; ---
+          ;; - - line1
+          ;;   - text1
+          ;; ---
+          ;; "\\(?:" yaml-bare-scalar-re " *:" "\\(?:"  " +.*"  "\\)?" "\\)?$"
+          )
   "Regexp matching a line containing one or more nested YAML sequences.")
 
 (defconst yaml-constant-scalars-re

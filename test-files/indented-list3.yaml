@@ -14,12 +14,10 @@
       - szívizom
 
 
-- group: "Izomszövetek előfordulása a különböző szervrendszerekben"
+- group: "text3"
   offered_answers:
-    - simaizom
-    - harántcsíkolt izom
-    - semmilyen
-    - porc
+    - txt1
+    - txt2
   blessed_similarities:
     -
       - porc
